@@ -10,25 +10,22 @@ public class HelloWorldServer {
 
     public void start() throws IOException {
         server = ServerBuilder.forPort(PORT)
-                .addService(new HelloWorldServiceImpl())
+                .addService(new HelloWorldServiceImpl()) // Add service implementation
                 .build()
                 .start();
+
+        System.out.println("Server started on port " + PORT);
     }
 
     public void blockUntilShutdown() throws InterruptedException {
-        if (server == null) {
-            return;
+        if (server != null) {
+            server.awaitTermination();
         }
-        server.awaitTermination();
     }
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         HelloWorldServer server = new HelloWorldServer();
-        System.out.println("\n\n");
-        System.out.println( "HelloWorld Service is running!");
-        System.out.println("\n\n");
         server.start();
         server.blockUntilShutdown();
     }
-
 }

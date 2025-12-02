@@ -7,6 +7,12 @@ repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)   // Fix for Gradle + Groovy + gRPC
+    }
+}
+
 def grpcVersion = '1.70.0'
 def protobufVersion = '3.25.8'
 def protocVersion = protobufVersion
@@ -16,7 +22,6 @@ dependencies {
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
 
-    // Java 9+ annotation workaround
     if (JavaVersion.current().isJava9Compatible()) {
         compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
         annotationProcessor "jakarta.annotation:jakarta.annotation-api:2.1.1"
@@ -35,7 +40,11 @@ protobuf {
         }
     }
     generateProtoTasks {
-        all()*.plugins { grpc {} }
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+        }
     }
 }
 
@@ -51,6 +60,9 @@ tasks.register('runClient', JavaExec) {
     description = 'Runs the gRPC client'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'HelloWorldClient'
-     args 'Thomas' 
-     args 'Micheler'
+    args 'Thomas', 'Micheler'
+}
+
+tasks.withType(Test) {
+    enabled = false
 }

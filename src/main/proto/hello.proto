@@ -1,7 +1,12 @@
 syntax = "proto3";
 
+package hello;
+option java_package = "hello";
+option java_outer_classname = "Hello";
+
 service HelloWorldService {
   rpc hello(HelloRequest) returns (HelloResponse) {}
+  rpc sendWarehouse(WarehouseRecord) returns (HelloResponse) {}
 }
 
 message HelloRequest {
@@ -11,4 +16,19 @@ message HelloRequest {
 
 message HelloResponse {
   string text = 1;
+}
+
+message ProductData {
+  int32 productId = 1;
+  string productName = 2;
+  string productCategory = 3;
+  int32 quantity = 4;
+  double price = 5;  // changed from 6 → 5 to keep consecutive numbering
+}
+
+message WarehouseRecord {
+  string warehouseID = 1;
+  string warehouseName = 2;
+  string timestamp = 3;
+  repeated ProductData productDataList = 4;  // keep numbering consecutive
 }
